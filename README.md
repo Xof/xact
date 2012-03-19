@@ -24,7 +24,7 @@ This recipe a few other nice features:
 * `xact()` operates like `commit_on_success()`, in that it will issue a rollback if an exception escapes from the block or function it is wrapping.
 * `xact()` ignores the dirty flag on the Django connection. Since we're deliberately wrapping stuff that modifies the database with it, the chance of it being dirty is near 100%, and a commit on a transaction that did not modify the database is no more expensive in PostgreSQL than a rollback. It also means you can do [raw SQL](https://docs.djangoproject.com/en/dev/topics/db/sql/) inside an `xact()` block without the [foot-gun](http://archives.postgresql.org/pgsql-hackers/2008-06/msg01101.php) of forgetting to call `set_dirty`.
 * Like the built-in Django transaction decorators, it can be used either as a decorator or as a context manager with the `with` statement.
-* `xact()` can be nested, giving us nested transactions! If it sees that there is already a transaction open when it starts a new block, it will use a [savepoint]() to set up a nested transaction block.  (PostgreSQL does not have nested transactions, but you can use savepoints to get 99.9% of the way there.)
+* `xact()` can be nested, giving us nested transactions! If it sees that there is already a transaction open when it starts a new block, it will use a [savepoint](http://www.postgresql.org/docs/9.1/static/sql-savepoint.html) to set up a nested transaction block.  (PostgreSQL does not have nested transactions as such, but you can use savepoints to get 99.9% of the way there.)
 * By not wrapping operations that do not modify the database, we get better behavior when using [pgPool II](http://www.pgpool.net/) (more on that in a future post).
 * `xact()` works around an [outstanding bug](https://code.djangoproject.com/ticket/16047) in Django's transaction handling on psycopg2.
 
@@ -32,7 +32,7 @@ This recipe a few other nice features:
 
 Of course, a few caveats:
 
-* `xact()` requires the `postgresql_psycopg2` backend, and PostgreSQL 8.2 or higher. It's possible it might work on other backends that support savepoints, but I wouldn't count on it.
+* `xact()` requires the `postgresql_psycopg2` backend, and PostgreSQL 8.2 or higher. It's possible it can be hacked to work on other backends that support savepoints.
 * `xact()` works just the way you want if it is nested *inside* a `commit_on_success()` block (it will properly create a savepoint insted of a new transaction). However, a `commit_on_success()` block nested inside of `xact()` will commit or rollback the entire transaction, somewhat defeating the outer `xact()`. To the extent possible, use only `xact()` in code you write.
 * Be sure you catch exceptions *outside of* the `xact()` block; otherwise, the automatic rollback will be defeated. Allow the exception to escape the `xact()` block, and then catch it. (Of course, if the intention is to always commit and to defeat the rollback, by all means catch the exception inside the block.)
 
@@ -66,4 +66,3 @@ Examples:
              # inside the "part 2" block is not caught, both part 2 and
              # part 1 will be rolled back.
 
-The source is [available on GitHub](https://github.com/Xof/xact/). It's licensed under the [PostgreSQL License](http://www.postgresql.org/about/licence/).
