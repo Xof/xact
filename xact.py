@@ -8,6 +8,9 @@
       the dirty flag when doing database-modifying raw SQL.
     * Better interaction with pgPool II, if you're using it.
     * A workaround for a subtle but nasty bug in Django's transaction management.
+    
+    As currently implemented, it is NOT thread-safe as a decorator (it IS thread-safe
+    as a context manager).  Fix coming.
 
     For full details, check the README.md file.
 """
@@ -109,5 +112,5 @@ def xact(using=None):
 # CHRISTOPHE PETTUS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT
 # NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 # PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS,
-# AND POSTGRESQL EXPERTS, INC. HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE,
+# AND CHRISTOPHE PETTUS HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE,
 # SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
