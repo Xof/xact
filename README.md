@@ -1,7 +1,8 @@
 `xact` is a recipe for handling transactions sensibly in Django applications on PostgreSQL.
 
 **Note**: As of Django 1.6, the functionality of `xact` will be merged into the Django core as the [`atomic` decorator](https://docs.djangoproject.com/en/dev/topics/db/transactions/#django.db.transaction.atomic).
-Code that uses `xact` should be able to be migrated to `atomic` with just a search-and-replace.
+Code that uses `xact` should be able to be migrated to `atomic` with just a search-and-replace. `atomic` works on
+databases other than PostgreSQL, is thread-safe, and has other nice features; switch to it when you can!
 
 The goals are:
 
