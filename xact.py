@@ -76,7 +76,10 @@ class _Transaction(object):
                 # Inner savepoint
                 transaction.savepoint_rollback(self.sid, self.using)
         
-        return issubclass(exc_type, Rollback)
+        if exc_type is None:
+            return False
+        else:
+            return issubclass(exc_type, Rollback)
             # Returning False here means we did not gobble up the exception, so the
             # exception process should continue.
     
