@@ -30,6 +30,10 @@ This recipe a few other nice features:
 
 `xact()` also supports the `using` parameter for [multiple databases](https://docs.djangoproject.com/en/dev/topics/db/multi-db/).
 
+`Rollback` is a supplied exception class designed for situations in which you want to trigger an exception to cause a rollback, but do not want that exception
+to propagate beyond the scope of the `xact` block.  `xact` will perform the
+rollback, then swallow the exception.
+
 Of course, a few caveats:
 
 * `xact()` requires the `postgresql_psycopg2` backend, and PostgreSQL 8.2 or higher. It's possible it can be hacked to work on other backends that support savepoints.

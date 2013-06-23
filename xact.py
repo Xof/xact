@@ -18,6 +18,15 @@ import psycopg2.extensions
 
 from django.db import transaction, DEFAULT_DB_ALIAS, connections
 
+
+class Rollback(Exception):
+    """ This class provides a standard exception that can be thrown to handle a
+        rollback condition.  If Xact receives an exception of this class (or
+        a subclass), it swallows it and continues exception, rather than
+        re-raising the exception.
+    """
+    pass
+
 class _Transaction(object):
 
     """ This class manages a particular transaction or savepoint block, using context
@@ -67,7 +76,7 @@ class _Transaction(object):
                 # Inner savepoint
                 transaction.savepoint_rollback(self.sid, self.using)
         
-        return False
+        return issubclass(exc_type, Rollback)
             # Returning False here means we did not gobble up the exception, so the
             # exception process should continue.
     
