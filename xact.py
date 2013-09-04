@@ -48,7 +48,7 @@ class _Transaction(object):
             transaction.managed(True, using=self.using)
    
     def __exit__(self, exc_type, exc_value, traceback):
-        if exc_value is None:
+        if exc_type is None:
             # commit operation
             if self.sid is None:
                 # Outer transaction
